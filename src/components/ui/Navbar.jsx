@@ -18,7 +18,7 @@ function NavScrollExample() {
             <Nav.Link as={NavLink} to="/">
               Home
             </Nav.Link>
-            <Nav.Link href="#action2">Trips</Nav.Link>
+            <Nav.Link as={NavLink} to="trips" >Trips</Nav.Link>
             <Nav.Link as={NavLink} to="about" >About</Nav.Link>
             
             <Nav.Link href="#">Login</Nav.Link>
