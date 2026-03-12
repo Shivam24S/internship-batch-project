@@ -4,6 +4,7 @@ import Home from "./components/pages/Home";
 import About from "./components/ui/About";
 import Trips from "./components/pages/Trips";
 import TripDetail from "./components/pages/TripDetail";
+import Auth from "./components/auth/Auth";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -27,6 +28,10 @@ const App = () => {
           path: "trip/:id",
           element: <TripDetail />,
         },
+        {
+          path:"/auth",
+          element:<Auth/>
+        }
       ],
     },
   ]);

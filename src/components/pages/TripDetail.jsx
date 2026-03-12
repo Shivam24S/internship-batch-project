@@ -1,5 +1,5 @@
-import { Container, Row, Col, Image, Card, Button, Badge, ListGroup } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { Container, Row, Col, Image, Card, Button, Badge, ListGroup, Accordion } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
 import { trips } from "../../data/tripsData";
 
 const TripDetail = () => {
@@ -8,7 +8,7 @@ const TripDetail = () => {
   const trip = trips.find((t) => t.id === Number(id));
 
 
-  console.log("trip data", trip)
+  const navigate = useNavigate()
 
   return (
     <>
@@ -56,10 +56,83 @@ const TripDetail = () => {
               </Col>
             </Row>
 
+            <Row className="mt-3" >
+              <Col>
+                <Card className="p-3" >
+                  <h5>Day-wise itinerary</h5>
+                  <Accordion flush>
+
+                    {trip.itinerary.map((a) => (
+
+                      <>
+                        <Accordion.Item eventKey={a.day}>
+                          <Accordion.Header>{a.day}-{a.title}</Accordion.Header>
+                          <Accordion.Body>
+                            {a.description}
+                          </Accordion.Body>
+                        </Accordion.Item>
+
+                      </>
+                    ))}
+                  </Accordion>
+                </Card>
+
+
+              </Col>
+            </Row>
+
+            <Row className="mt-3">
+              <Col lg={6}>
+                <Card className="p-3" >
+                  <h5>Inclusion</h5>
+                  <ListGroup className="mt-2" variant="flush" >
+                    {trip.inclusions.map((inclusions) => (
+                      <ListGroup.Item> ✅{inclusions} </ListGroup.Item>
+                    ))}
+                  </ListGroup>
+                </Card>
+
+              </Col>
+              <Col lg={6}>
+                <Card className="p-3" >
+                  <h5>exclusions</h5>
+                  <ListGroup className="mt-2" variant="flush" >
+                    {trip.exclusions.map((exclusions) => (
+                      <ListGroup.Item> ✖️{exclusions} </ListGroup.Item>
+                    ))}
+                  </ListGroup>
+                </Card></Col>
+            </Row>
+
+            <Row className="mt-3" >
+              <Col>
+                <Card className="p-3">
+                  <h5>Best Time To Visit</h5>
+                  <p>{trip.bestTimeToVisit}</p>
+                </Card>
+              </Col>
+            </Row>
+
+            <Button onClick={() => navigate(-1)} className="mt-3" variant="outline-secondary"> 🔙 Back to trips</Button>
+
 
           </Col>
 
-          <Col lg={4}></Col>
+          <Col lg={4}  >
+            <Card className="p-3 shadow sticky-top"  style={{top:"50px"}}>
+              <h3>₹{trip.price}</h3>
+              <h6>{trip.duration} - {trip.difficulty}</h6>
+              <div className="d-grid gap-2">
+                <Button variant="primary"   >
+                  Book now
+                </Button>
+
+                <Button variant="outline-secondary" >
+                  inquiry now
+                </Button>
+              </div>
+
+            </Card></Col>
 
         </Row>
       </Container>
