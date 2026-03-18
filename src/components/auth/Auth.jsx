@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Container, Row, Col, Card, Button, Form, FloatingLabel } from 'react-bootstrap'
-import { auth } from '../../firebase/config'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { auth, googleAuth } from '../../firebase/config'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
+import { useNavigate } from 'react-router-dom'
 
 const Auth = () => {
     const [authData, setAuthData] = useState({
@@ -10,6 +11,10 @@ const Auth = () => {
     })
 
     const [isSignup, setIsSignup] = useState(false)
+
+    const [error, setError] = useState(null)
+
+    const navigate = useNavigate()
 
     const handleAuthData = (field, e) => {
         setAuthData((prev) => ({
@@ -21,17 +26,60 @@ const Auth = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        if (isSignup) {
+        try {
+            if (isSignup) {
 
-            const result = await createUserWithEmailAndPassword(auth, authData.email, authData.password)
+                const result = await createUserWithEmailAndPassword(auth, authData.email, authData.password)
 
 
-            console.log("result", result)
+                if (!result) {
+                    navigate("/login")
+                } else {
+                    navigate("/trips")
+                }
 
-        } else {
-            const result = await signInWithEmailAndPassword(auth, authData.email, authData.password)
-console.log("result", result)
+            } else {
+                const result = await signInWithEmailAndPassword(auth, authData.email, authData.password)
+
+                if (!result) {
+                    navigate("/login")
+                } else {
+                    navigate("/trips")
+                }
+            }
+        } catch (error) {
+
+            setError(error.message)
+
+
         }
+    }
+
+
+    const handleGoogleLogin = async () => {
+
+        try {
+
+            const result = await signInWithPopup(auth, googleAuth)
+
+            if (!result) {
+                throw new Error("failed to login")
+            }
+
+            console.log("user", result)
+
+            if (!result) {
+                navigate("/login")
+            } else {
+                navigate("/trips")
+            }
+
+        } catch (error) {
+
+            setError(error.message)
+
+        }
+
     }
 
 
@@ -45,6 +93,8 @@ console.log("result", result)
                         <h3 className='text-center mb-3'>
                             {isSignup ? 'Sign Up' : 'Login'}
                         </h3>
+
+                        <p className='text-center text-danger fs-5'  >{error ? error : ""}</p>
 
                         <Form onSubmit={handleSubmit}>
 
@@ -75,6 +125,7 @@ console.log("result", result)
                             <Button
                                 variant="danger"
                                 className="w-100 mb-3"
+                                onClick={handleGoogleLogin}
 
                             >
                                 Continue with Google

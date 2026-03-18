@@ -10,6 +10,18 @@ const TripDetail = () => {
 
   const navigate = useNavigate()
 
+const handleBook = () =>{
+
+  try {
+
+    
+    
+  } catch (error) {
+    
+  }
+}
+
+
   return (
     <>
 
@@ -123,7 +135,7 @@ const TripDetail = () => {
               <h3>₹{trip.price}</h3>
               <h6>{trip.duration} - {trip.difficulty}</h6>
               <div className="d-grid gap-2">
-                <Button variant="primary"   >
+                <Button variant="primary" onClick={handleBook}   >
                   Book now
                 </Button>
 
