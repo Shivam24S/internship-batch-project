@@ -5,6 +5,7 @@ import About from "./components/ui/About";
 import Trips from "./components/pages/Trips";
 import TripDetail from "./components/pages/TripDetail";
 import Auth from "./components/auth/Auth";
+import BookingsForm from "./components/pages/BookingsForm";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -29,8 +30,13 @@ const App = () => {
           element: <TripDetail />,
         },
         {
-          path:"/auth",
-          element:<Auth/>
+          path: "/auth",
+          element: <Auth />
+        },
+        {
+          path: "/booking/:id",
+          element: <BookingsForm />
+
         }
       ],
     },

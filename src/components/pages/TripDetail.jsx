@@ -1,6 +1,8 @@
 import { Container, Row, Col, Image, Card, Button, Badge, ListGroup, Accordion } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import { trips } from "../../data/tripsData";
+import { useContext } from "react";
+import { authContext } from "../context/AuthContext";
 
 const TripDetail = () => {
   const { id } = useParams();
@@ -10,16 +12,29 @@ const TripDetail = () => {
 
   const navigate = useNavigate()
 
-const handleBook = () =>{
 
-  try {
+  const { user } = useContext(authContext)
 
-    
-    
-  } catch (error) {
-    
+  console.log("check-user", user)
+
+  const handleBook = () => {
+
+    try {
+
+
+      if (!user) {
+
+        navigate("/auth")
+
+      } else {
+        navigate(`/booking/${id}`)
+      }
+
+
+    } catch (error) {
+
+    }
   }
-}
 
 
   return (
@@ -131,7 +146,7 @@ const handleBook = () =>{
           </Col>
 
           <Col lg={4}  >
-            <Card className="p-3 shadow sticky-top"  style={{top:"50px"}}>
+            <Card className="p-3 shadow sticky-top" style={{ top: "50px" }}>
               <h3>₹{trip.price}</h3>
               <h6>{trip.duration} - {trip.difficulty}</h6>
               <div className="d-grid gap-2">
