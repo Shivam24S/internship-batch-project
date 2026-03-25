@@ -8,13 +8,14 @@ import Auth from "./components/auth/Auth";
 import BookingsForm from "./components/pages/BookingsForm";
 import ProtectedRoutes from "./routes/ProtectedRoutes";
 import Error from "./components/pages/Error";
+import MyBookings from "./components/pages/MyBookings";
 
 const App = () => {
   const router = createBrowserRouter([
     {
       path: "/",
       element: <MainLayout />,
-      errorElement:<Error/>,
+      errorElement: <Error />,
       children: [
         {
           index: true,
@@ -43,6 +44,11 @@ const App = () => {
             path: "/booking/:id",
             element: <BookingsForm />
 
+
+          }, {
+
+            path: "/myBookings",
+            element: <MyBookings />
 
           }]
         }

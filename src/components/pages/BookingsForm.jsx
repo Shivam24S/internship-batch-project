@@ -61,6 +61,7 @@ const BookingsForm = () => {
     try {
 
       await addDoc(collection(db, "bookings"), {
+        userId: user.uid,
         name: formData.name,
         email: formData.email,
         phone: formData.phone,

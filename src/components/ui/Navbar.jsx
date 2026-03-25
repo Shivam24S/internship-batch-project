@@ -41,12 +41,15 @@ function NavScrollExample() {
             </Nav.Link>
             <Nav.Link as={NavLink} to="trips" >Trips</Nav.Link>
 
-            {user ? <Nav.Link as={NavLink} to="" >My Bookings</Nav.Link> : null}
-
             <Nav.Link as={NavLink} to="about" >About</Nav.Link>
 
             {
-              user ? <Button variant="outline-danger" onClick={handleLogout}  >logout</Button> : <Button variant="outline-success" onClick={handleLogin} >Log in</Button>
+              user ? (
+                <>
+                  <Nav.Link as={NavLink} to="myBookings" >My Bookings</Nav.Link>
+                  <Button variant="outline-danger" onClick={handleLogout}  >logout</Button>
+                </>
+              ) : <Button variant="outline-success" onClick={handleLogin} >Log in</Button>
             }
           </Nav>
         </Navbar.Collapse>
