@@ -89,7 +89,7 @@ const Auth = () => {
         </div>
 
         {/* Form Panel */}
-        <div className={styles.authFormPanel}>
+        <div className={styles.authFormPanel} style={{marginTop:"2rem"}}>
           <div className={styles.tabHeader}>
             <button className={`${styles.tabBtn} ${isSignup ? styles.tabActive : ""}`} onClick={() => switchTab(true)}>Create Account</button>
             <button className={`${styles.tabBtn} ${!isSignup ? styles.tabActive : ""}`} onClick={() => switchTab(false)}>Sign In</button>
