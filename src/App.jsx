@@ -9,9 +9,14 @@ import BookingsForm from "./components/pages/BookingsForm";
 import ProtectedRoutes from "./routes/ProtectedRoutes";
 import Error from "./components/pages/Error";
 import MyBookings from "./components/pages/MyBookings";
+import Profile from "./components/pages/Profile";
 
 const App = () => {
   const router = createBrowserRouter([
+    {
+      path: "/auth",
+      element: <Auth />,
+    },
     {
       path: "/",
       element: <MainLayout />,
@@ -34,23 +39,21 @@ const App = () => {
           element: <TripDetail />,
         },
         {
-          path: "/auth",
-          element: <Auth />
-        },
-        {
           element: <ProtectedRoutes />,
-          children: [{
-
-            path: "/booking/:id",
-            element: <BookingsForm />
-
-
-          }, {
-
-            path: "/myBookings",
-            element: <MyBookings />
-
-          }]
+          children: [
+            {
+              path: "/booking/:id",
+              element: <BookingsForm />
+            },
+            {
+              path: "/myBookings",
+              element: <MyBookings />
+            },
+            {
+              path: "/profile",
+              element: <Profile />
+            }
+          ]
         }
       ],
     },

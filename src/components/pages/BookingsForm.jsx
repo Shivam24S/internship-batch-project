@@ -6,19 +6,12 @@ import { authContext } from '../context/AuthContext'
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { db } from '../../firebase/config'
 import { useNavigate } from 'react-router-dom'
+import styles from './BookingsForm.module.css'
 
 const BookingsForm = () => {
-
-
   const { id } = useParams()
-
   const selectedTrips = trips.find((t) => t.id === Number(id))
-
-
   const { user } = useContext(authContext)
-
-
-  console.log("user", user)
 
   const [formData, setFormData] = useState({
     name: user.displayName,
@@ -29,7 +22,6 @@ const BookingsForm = () => {
     specialRequest: null,
     tripDate: ""
   })
-
 
   const navigate = useNavigate()
 
@@ -43,23 +35,18 @@ const BookingsForm = () => {
   }
 
   useEffect(() => {
-
     setFormData((prevData) => {
       return {
         ...prevData,
         grandTotal: prevData.totalPerson * selectedTrips.price
       }
     })
-
   }, [formData.totalPerson, selectedTrips.price])
 
-
-
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     try {
-
       await addDoc(collection(db, "bookings"), {
         userId: user.uid,
         name: formData.name,
@@ -73,12 +60,12 @@ const BookingsForm = () => {
         tripName: selectedTrips.name,
         tripPrice: selectedTrips.price,
         createdAt: serverTimestamp(),
-
       })
 
-      alert("Trip booked successfully")
-
+      alert("🎉 Trip booked successfully! Check your bookings.")
       setFormData({
+        name: user.displayName,
+        email: user.email,
         phone: "",
         tripDate: "",
         specialRequest: "",
@@ -86,108 +73,204 @@ const BookingsForm = () => {
         grandTotal: 0,
       })
 
-      navigate("/")
-
+      navigate("/myBookings")
     } catch (error) {
-
       console.log(error)
-
+      alert("❌ Error booking trip. Please try again.")
     }
-
   }
-
-
 
   if (!selectedTrips) {
     return (
-      <Container>
+      <Container className="mt-5">
         <Row>
           <Col>
-            <Card className="shadow mt-5">
-              <Card.Body>
-                <Card.Title>Trips Detail not Found</Card.Title>
-                <Button variant="primary" onClick={() => navigate(-1)} >Back To Trips</Button>
+            <Card className={`${styles.notFoundCard} shadow`}>
+              <Card.Body className="text-center py-5">
+                <h2>📍 Trip Not Found</h2>
+                <p className="text-muted">The trip you're trying to book doesn't exist.</p>
+                <Button variant="primary" onClick={() => navigate("/trips")}>
+                  ← Back to Trips
+                </Button>
               </Card.Body>
-            </Card></Col>
+            </Card>
+          </Col>
         </Row>
       </Container>
     )
-
   }
 
-
-
   return (
-    <Container className='mt-5'>
-      <Row>
-        <Col md={6} >
-          <Card className='shadow rounded-5' >
-            <Card.Img variant="top" src={selectedTrips.image} className='rounded-5 shadow' style={{ height: "400px" }} />
-            <Card.Body className='text-center'>
-              <Card.Title>{selectedTrips.name}</Card.Title>
-              <Card.Text>
-                <h5 className="text-secondary" >{selectedTrips.destination}</h5>
-                <div className="d-flex gap-1 justify-content-center align-items-center">
-                  <Badge bg="primary" >{selectedTrips.duration}</Badge>
-                  <Badge bg="secondary" >{selectedTrips.rating}</Badge>
-                  <Badge bg="info" >{selectedTrips.difficulty}</Badge>
-                  <Badge bg="success" > ₹{selectedTrips.price}</Badge>
+    <>
+      <section className={styles.heroSection}>
+        <Container>
+          <h1 className={styles.pageTitle}>Complete Your Booking</h1>
+          <p className={styles.pageSubtitle}>Confirm your details and secure your adventure</p>
+        </Container>
+      </section>
+
+      <section style={{ padding: 'calc(8px * 12) 0' }}>
+        <Container>
+          <Row className="g-5">
+            {/* Trip Info Card */}
+            <Col lg={5}>
+            <Card className={styles.tripCard}>
+              <div className={styles.imageContainer}>
+                <Card.Img 
+                  variant="top" 
+                  src={selectedTrips.image} 
+                  className={styles.tripImage}
+                />
+              </div>
+              <Card.Body>
+                <h3 className={styles.tripTitle}>{selectedTrips.name}</h3>
+                <p className={styles.destination}>📍 {selectedTrips.destination}</p>
+                
+                <div className={styles.badges}>
+                  <Badge className={styles.badge}>{selectedTrips.duration}</Badge>
+                  <Badge className={styles.badge}>⭐ {selectedTrips.rating}</Badge>
+                  <Badge className={styles.badge}>{selectedTrips.difficulty}</Badge>
                 </div>
-              </Card.Text>
 
-            </Card.Body>
-          </Card>
+                <div className={styles.priceBreakdown}>
+                  <div className={styles.breakdownItem}>
+                    <span>Price per Person</span>
+                    <strong>₹{selectedTrips.price.toLocaleString('en-IN')}</strong>
+                  </div>
+                  <div className={styles.breakdownItem}>
+                    <span>Number of Persons</span>
+                    <strong>{formData.totalPerson}</strong>
+                  </div>
+                  <div className={styles.breakdownDivider}></div>
+                  <div className={styles.breakdownTotal}>
+                    <span>Total Amount</span>
+                    <strong>₹{formData.grandTotal.toLocaleString('en-IN')}</strong>
+                  </div>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
 
+          {/* Booking Form */}
+          <Col lg={7}>
+            <Card className={styles.formCard}>
+              <Card.Body>
+                <h3 className={styles.formTitle}>📋 Booking Details</h3>
+                
+                <Form onSubmit={handleSubmit} className={styles.form}>
+                  
+                  <div className={styles.formGroup}>
+                    <FloatingLabel label="Full Name" className="mb-3">
+                      <Form.Control 
+                        type="text" 
+                        value={formData.name}
+                        onChange={(e) => handleChange("name", e)}
+                        className={styles.input}
+                        placeholder="Your full name"
+                      />
+                    </FloatingLabel>
+                  </div>
 
+                  <div className={styles.formGroup}>
+                    <FloatingLabel label="Email Address" className="mb-3">
+                      <Form.Control 
+                        type="email" 
+                        value={formData.email}
+                        onChange={(e) => handleChange("email", e)}
+                        className={styles.input}
+                        placeholder="your@email.com"
+                      />
+                    </FloatingLabel>
+                  </div>
 
-        </Col>
-        <Col md={6} className='mt-3' >
+                  <div className={styles.formGroup}>
+                    <FloatingLabel label="Phone Number" className="mb-3">
+                      <Form.Control 
+                        type="tel" 
+                        value={formData.phone}
+                        onChange={(e) => handleChange("phone", e)}
+                        className={styles.input}
+                        placeholder="+91"
+                        required
+                      />
+                    </FloatingLabel>
+                  </div>
 
-          <Form onSubmit={handleSubmit}>
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <FloatingLabel label="Trip Date" className="mb-3">
+                        <Form.Control 
+                          type="date" 
+                          value={formData.tripDate}
+                          onChange={(e) => handleChange("tripDate", e)}
+                          className={styles.input}
+                          required
+                        />
+                      </FloatingLabel>
+                    </div>
 
-            <FloatingLabel
-              controlId="floatingInput"
-              label="Name"
-              className="mb-3"
-            >
-              <Form.Control type="text" value={formData.name} onChange={(e) => handleChange("name", e)} />
-            </FloatingLabel>
+                    <div className={styles.formGroup}>
+                      <FloatingLabel label="Number of Persons" className="mb-3">
+                        <Form.Control 
+                          type="number" 
+                          value={formData.totalPerson}
+                          onChange={(e) => handleChange("totalPerson", e)}
+                          className={styles.input}
+                          min="1"
+                          max="20"
+                          required
+                        />
+                      </FloatingLabel>
+                    </div>
+                  </div>
 
+                  <div className={styles.formGroup}>
+                    <FloatingLabel label="Special Requests (Optional)" className="mb-3">
+                      <Form.Control 
+                        as="textarea"
+                        rows={3}
+                        value={formData.specialRequest || ""}
+                        onChange={(e) => handleChange("specialRequest", e)}
+                        className={styles.input}
+                        placeholder="Any special requirements or preferences?"
+                      />
+                    </FloatingLabel>
+                  </div>
 
-            <FloatingLabel controlId="floatingPassword" label="Email" className="mb-3">
-              <Form.Control type="email" value={formData.email} onChange={(e) => handleChange("email", e)} />
-            </FloatingLabel>
+                  <div className={styles.totalBox}>
+                    <div className={styles.totalLabel}>Grand Total</div>
+                    <div className={styles.totalAmount}>
+                      ₹{formData.grandTotal.toLocaleString('en-IN')}
+                    </div>
+                  </div>
 
-            <FloatingLabel controlId="floatingPhone" label="Phone" className="mb-3">
-              <Form.Control type="phone" value={formData.phone} onChange={(e) => handleChange("phone", e)} />
-            </FloatingLabel>
+                  <div className={styles.buttonGroup}>
+                    <Button 
+                      className={styles.bookBtn}
+                      type='submit'
+                    >
+                      🎫 Confirm Booking
+                    </Button>
+                    <Button 
+                      variant='outline-secondary'
+                      onClick={() => navigate(-1)}
+                      className={styles.cancelBtn}
+                    >
+                      ← Go Back
+                    </Button>
+                  </div>
 
-            <FloatingLabel controlId="floatingPhone" label="Trip Date" className="mb-3">
-              <Form.Control type="date" value={formData.tripDate} onChange={(e) => handleChange("tripDate", e)} />
-            </FloatingLabel>
-
-
-            <FloatingLabel controlId="floatingPhone" label="Total Person" className="mb-3">
-              <Form.Control type="number" value={formData.totalPerson} onChange={(e) => handleChange("totalPerson", e)} />
-            </FloatingLabel>
-
-
-            <FloatingLabel controlId="floatingPhone" label="Special Request" className="mb-3">
-              <Form.Control type="text" value={formData.specialRequest} onChange={(e) => handleChange("specialRequest", e)} />
-            </FloatingLabel>
-
-            <FloatingLabel controlId="floatingPhone" label="Grand Total" className="mb-3">
-              <Form.Control type="text" value={`₹ ${formData.grandTotal}`} readOnly />
-            </FloatingLabel>
-            <div className="d-grid">
-              <Button variant='outline-success' type='submit' >Confirm Booking</Button>
-            </div>
-          </Form>
-
-        </Col>
-      </Row>
-
-    </Container>
+                  <p className={styles.securNote}>
+                    ✓ Secure checkout • Free cancellation • 24/7 support
+                  </p>
+                </Form>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+      </section>
+    </>
   )
 }
 
